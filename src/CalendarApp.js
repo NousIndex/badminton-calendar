@@ -50,7 +50,7 @@ const CalendarApp = () => {
   }
 
   const fetchBookings = async () => {
-    const res = await fetch('https://badminton-calendar.vercel.app/api/get');
+    const res = await fetch('https://badminton-calendar.vercel.app/api/getEvents');
     const data = await res.json();
     try {
       const coloredEvents = data.map((event) => ({

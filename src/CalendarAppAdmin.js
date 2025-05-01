@@ -33,7 +33,7 @@ const CalendarAppAdmin = () => {
 
   const createBooking = async (bookingData) => {
     const { color, ...cleanedEvent } = bookingData;
-    const res = await fetch('https://badminton-calendar.vercel.app/api/create', {
+    const res = await fetch('https://badminton-calendar.vercel.app/api/createEvent', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ const CalendarAppAdmin = () => {
 
   const updateBooking = async (updatedData) => {
     const { color, ...cleanedEvent } = updatedData;
-    const res = await fetch(`https://badminton-calendar.vercel.app/api/update`, {
+    const res = await fetch(`https://badminton-calendar.vercel.app/api/updateEvent`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ const CalendarAppAdmin = () => {
   };
 
   const deleteBooking = async (uuid) => {
-    const res = await fetch(`https://badminton-calendar.vercel.app/api/delete`, {
+    const res = await fetch(`https://badminton-calendar.vercel.app/api/deleteEvent`, {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -96,7 +96,7 @@ const CalendarAppAdmin = () => {
   //9b59b6 purple
 
   const fetchBookings = async () => {
-    const res = await fetch('https://badminton-calendar.vercel.app/api/get');
+    const res = await fetch('https://badminton-calendar.vercel.app/api/getEvents');
     const data = await res.json();
     try {
       const coloredEvents = data.map((event) => ({
