@@ -1,0 +1,192 @@
+/* src/App.css */
+.App {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+/* Stack header toolbar vertically */
+.fc-header-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Create a top row for the title, center aligned */
+.fc-header-toolbar .fc-toolbar-title {
+  text-align: center;
+  width: 100%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Create a second row for button groups, restoring left/center/right alignment */
+.fc-header-toolbar {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.fc-toolbar-chunk {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Optional: ensure buttons wrap nicely on mobile */
+.fc-button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.fc-daygrid-event-dot {
+  border-top-width: calc(4px);
+  border-right-width: calc(4px);
+  border-bottom-width: calc(4px);
+  border-left-width: calc(4px);
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(255, 255, 255);
+  border-right-color: rgb(255, 255, 255);
+  border-bottom-color: rgb(255, 255, 255);
+  border-left-color: rgb(255, 255, 255);
+  border-image-source: initial;
+  border-image-slice: initial;
+  border-image-width: initial;
+  border-image-outset: initial;
+
+}
+
+.fc-event-time {
+  color: #fff;
+}
+
+.fc-event-title {
+  color: #fff;
+}
+
+/* Modal backdrop covers the screen */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal box centered */
+.modal {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 400px;
+  padding-right: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Inputs and layout */
+.modal label {
+  display: block;
+  margin: 12px 0 4px;
+  font-weight: 500;
+}
+
+.modal input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* Buttons container */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.modal-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;  
+  gap: 10px;
+}
+.modal-top button {
+  items: center;
+  padding: 8px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.modal-top button:last-child {
+  background-color:rgb(255, 0, 0);
+  color: white;
+}
+
+.modal-buttons button {
+  flex: 1;
+  padding: 8px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal-buttons button:first-child {
+  background-color: #007bff;
+  color: white;
+}
+
+.modal-buttons button:last-child {
+  background-color: #e0e0e0;
+}
+
+/* Optional fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.custom-dropdown {
+  margin-left: 2%;
+  width: 75 %;
+  padding: 1%;
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  h2 {
+    font-size: 1.2rem;
+  }
+
+  .fc .fc-button {
+    padding: 3px 6px;
+  }
+  .fc-header-toolbar .fc-toolbar-title {
+    font-size: 1.2rem;
+  }
+
+  .custom-dropdown {
+    font-size: 14px;
+  }
+}
+
