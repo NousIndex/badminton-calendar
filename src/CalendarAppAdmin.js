@@ -47,7 +47,7 @@ const CalendarAppAdmin = () => {
 
   const updateBooking = async (updatedData) => {
     const { color, ...cleanedEvent } = updatedData;
-    const res = await fetch(`https://badminton-calendar.vercel.app/api/updateEvent`, {
+    const res = await fetch('https://badminton-calendar.vercel.app/api/updateEvent', {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ const CalendarAppAdmin = () => {
   };
 
   const deleteBooking = async (uuid) => {
-    const res = await fetch(`https://badminton-calendar.vercel.app/api/deleteEvent`, {
+    const res = await fetch('https://badminton-calendar.vercel.app/api/deleteEvent', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
@@ -176,7 +176,7 @@ const CalendarAppAdmin = () => {
       setEvents([
         ...events,
         {
-          id: uuidv4(),
+          uuid: uuidv4(),
           title: updatedTitle,
           start: updatedStart,
           end: updatedEnd,
@@ -184,6 +184,7 @@ const CalendarAppAdmin = () => {
         },
       ]);
       createBooking({
+        uuid: uuidv4(),
         title: updatedTitle,
         start: updatedStart,
         end: updatedEnd,
