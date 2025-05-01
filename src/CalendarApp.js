@@ -129,6 +129,12 @@ const CalendarApp = () => {
           center: 'dayGridMonth,timeGridWeek,timeGridDay today,prev,next',
           end: '',
         }}
+        buttonText={{
+          today: 'Today',
+          dayGridMonth: 'Month',
+          timeGridWeek: 'Week',
+          timeGridDay: 'Day',
+        }}
         editable={false}
         selectable={false}
         events={events}

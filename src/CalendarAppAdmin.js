@@ -234,6 +234,12 @@ const CalendarAppAdmin = () => {
           center: 'dayGridMonth,timeGridWeek,timeGridDay today,prev,next',
           end: '',
         }}
+        buttonText={{
+          today: 'Today',
+          dayGridMonth: 'Month',
+          timeGridWeek: 'Week',
+          timeGridDay: 'Day',
+        }}
         editable={true}
         selectable={true}
         dateClick={handleDateClick}
