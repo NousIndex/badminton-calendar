@@ -8,6 +8,8 @@ import './CalendarApp.css';
 
 const CalendarAppAdmin = () => {
   const [events, setEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
+
   const [isSaving, setIsSaving] = useState(false);
   const [initialView, setInitialView] = useState('dayGridMonth');
   const calendarRef = useRef(null);
@@ -30,6 +32,31 @@ const CalendarAppAdmin = () => {
     });
     setNewEvent(true);
     setShowModal(true);
+  };
+
+  function getLocationByTitle(title) {
+    switch (title) {
+      case 'SBH@Sims':
+        return 'https://maps.app.goo.gl/e7KPiqXSaXxaaLX69';
+      case 'OBA Arena@Sprout Hub':
+        return 'https://maps.app.goo.gl/syLNgLojyv8dBWf48';
+      case 'KFF Arena':
+        return 'https://maps.app.goo.gl/5UyCTGS2FnGryXeW6';
+      case 'Delta Sports Hall':
+        return 'https://maps.app.goo.gl/m3XJfJu4ZNRZ5bhb7';
+      case 'Stadium':
+        return 'https://maps.app.goo.gl/3eV9hyNuNThAyyLC8';
+      default:
+        return '';
+    }
+  }
+
+  const formatTo12Hour = (time24) => {
+    const [hour, minute] = time24.split(':');
+    const hourInt = parseInt(hour, 10);
+    const suffix = hourInt >= 12 ? 'PM' : 'AM';
+    const hour12 = hourInt % 12 || 12; // Convert 0 or 12 hours to 12
+    return `${hour12}:${minute} ${suffix}`;
   };
 
   const createBooking = async (bookingData) => {
@@ -129,12 +156,25 @@ const CalendarAppAdmin = () => {
     );
     const data = await res.json();
     try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const filteredAndSorted = data
+        .filter((event) => new Date(event.end) >= today) // Exclude past events
+        .sort((a, b) => new Date(a.start) - new Date(b.start)); // Sort by closest
+
+      const coloredEvents2 = filteredAndSorted.map((event) => ({
+        ...event,
+        color: getColorByTitle(event.title),
+      }));
+
       const coloredEvents = data.map((event) => ({
         ...event,
         color: getColorByTitle(event.title),
       }));
 
       setEvents(coloredEvents);
+      setUpcomingEvents(coloredEvents2);
     } catch (error) {
       console.error('Error fetching events:', error);
     }
@@ -257,6 +297,31 @@ const CalendarAppAdmin = () => {
     setShowModal(false);
   };
 
+  const handleEventClickCard = (clickInfo) => {
+    const event = clickInfo.event;
+    setActiveEvent(event);
+    try {
+      setFormData({
+        title: event.title,
+        dateStart: event.start.split('T')[0],
+        timeStart: event.start.split('T')[1].slice(0, 5),
+        dateEnd: event.end.split('T')[0],
+        timeEnd: event.end.split('T')[1].slice(0, 5),
+        court: event.court_no,
+      });
+    } catch {
+      setFormData({
+        title: event.title,
+        dateStart: event.startStr.split('T')[0],
+        timeStart: event.startStr.split('T')[1].slice(0, 5),
+        dateEnd: event.startStr.split('T')[0],
+        timeEnd: event.startStr.split('T')[1].slice(0, 5),
+        court: event.court_no,
+      });
+    }
+    setShowModal(true);
+  };
+
   // Detect outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -301,6 +366,44 @@ const CalendarAppAdmin = () => {
         eventClick={handleEventClick}
         eventDisplay="block"
       />
+      <div className="upcoming-events">
+        <h3>🎯 Upcoming Courts</h3>
+        <div className="event-list">
+          {upcomingEvents.length > 0 ? (
+            upcomingEvents.map((event, index) => (
+              <div
+                key={index}
+                className="event-card"
+                style={{
+                  borderLeft: `5px solid ${getColorByTitle(event.title)}`,
+                }}
+                onClick={() => handleEventClickCard({ event })}
+              >
+                <div className="event-title">{event.title}</div>
+                <div className="event-date-time">
+                  🏸 Court {event.court_no}
+                  <br />
+                  📅 {new Date(event.start).toLocaleDateString()}
+                  <br />⏰{' '}
+                  {formatTo12Hour(event.start.split('T')[1].slice(0, 5))} -{' '}
+                  {formatTo12Hour(event.end.split('T')[1].slice(0, 5))}
+                </div>
+                <a
+                  className="event-link"
+                  href={getLocationByTitle(event.title)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()} // Prevent modal from opening
+                >
+                  🗺️ Google Maps
+                </a>
+              </div>
+            ))
+          ) : (
+            <p>No upcoming events</p>
+          )}
+        </div>
+      </div>
       {/* Modal for editing event */}
       {showModal && (
         <div className="modal-backdrop">
