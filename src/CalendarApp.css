@@ -60,7 +60,6 @@ h2 {
   border-image-slice: initial;
   border-image-width: initial;
   border-image-outset: initial;
-
 }
 
 .fc-event-time {
@@ -69,6 +68,50 @@ h2 {
 
 .fc-event-title {
   color: #fff;
+}
+
+.upcoming-events {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-top: 2px solid #ddd;
+}
+
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.event-card {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s, background-color 0.3s;
+  box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.event-card:hover {
+  transform: scale(1.02);
+  background-color: #eef3f7;
+}
+
+.event-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.event-date-time {
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.event-link {
+  color: #007bff;
+  text-decoration: underline;
+  font-size: 0.9rem;
 }
 
 /* Modal backdrop covers the screen */
@@ -120,7 +163,7 @@ h2 {
 .modal-top {
   display: flex;
   justify-content: space-between;
-  align-items: center;  
+  align-items: center;
   gap: 10px;
 }
 .modal-top button {
@@ -132,7 +175,7 @@ h2 {
   cursor: pointer;
 }
 .modal-top button:last-child {
-  background-color:rgb(255, 0, 0);
+  background-color: rgb(255, 0, 0);
   color: white;
 }
 
@@ -189,4 +232,3 @@ h2 {
     font-size: 14px;
   }
 }
-

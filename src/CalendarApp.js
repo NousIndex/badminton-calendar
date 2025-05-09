@@ -7,6 +7,7 @@ import './CalendarApp.css';
 
 const CalendarApp = () => {
   const [events, setEvents] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
 
   const [initialView, setInitialView] = useState('dayGridMonth');
   const calendarRef = useRef(null);
@@ -55,12 +56,25 @@ const CalendarApp = () => {
     );
     const data = await res.json();
     try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const filteredAndSorted = data
+        .filter((event) => new Date(event.end) >= today) // Exclude past events
+        .sort((a, b) => new Date(a.start) - new Date(b.start)); // Sort by closest
+
+      const coloredEvents2 = filteredAndSorted.map((event) => ({
+        ...event,
+        color: getColorByTitle(event.title),
+      }));
+
       const coloredEvents = data.map((event) => ({
         ...event,
         color: getColorByTitle(event.title),
       }));
 
       setEvents(coloredEvents);
+      setUpcomingEvents(coloredEvents2);
     } catch (error) {
       console.error('Error fetching events:', error);
     }
@@ -94,6 +108,30 @@ const CalendarApp = () => {
     }
     setShowModal(true);
   };
+  const handleEventClickCard = (clickInfo) => {
+    const event = clickInfo.event;
+    setActiveEvent(event);
+    try {
+      setFormData({
+        title: event.title,
+        dateStart: event.start.split('T')[0],
+        timeStart: event.start.split('T')[1].slice(0, 5),
+        dateEnd: event.end.split('T')[0],
+        timeEnd: event.end.split('T')[1].slice(0, 5),
+        court: event.court_no,
+      });
+    } catch {
+      setFormData({
+        title: event.title,
+        dateStart: event.startStr.split('T')[0],
+        timeStart: event.startStr.split('T')[1].slice(0, 5),
+        dateEnd: event.startStr.split('T')[0],
+        timeEnd: event.startStr.split('T')[1].slice(0, 5),
+        court: event.court_no,
+      });
+    }
+    setShowModal(true);
+  };
 
   // Detect outside click
   useEffect(() => {
@@ -123,7 +161,7 @@ const CalendarApp = () => {
       className="App"
       style={{ padding: '1rem' }}
     >
-      <h2 style={{ textAlign: 'center' }}>🏸 Badminton Calendar</h2>
+      <h2 style={{ textAlign: 'center' }}>🏸 Badminton Court Calendar</h2>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -146,6 +184,44 @@ const CalendarApp = () => {
         eventClick={handleEventClick}
         eventDisplay="block"
       />
+      <div className="upcoming-events">
+        <h3>🎯 Upcoming Courts</h3>
+        <div className="event-list">
+          {upcomingEvents.length > 0 ? (
+            upcomingEvents.map((event, index) => (
+              <div
+                key={index}
+                className="event-card"
+                style={{
+                  borderLeft: `5px solid ${getColorByTitle(event.title)}`,
+                }}
+                onClick={() => handleEventClickCard({ event })}
+              >
+                <div className="event-title">{event.title}</div>
+                <div className="event-date-time">
+                  🏸 Court {event.court_no}
+                  <br />
+                  📅 {new Date(event.start).toLocaleDateString()}
+                  <br />⏰{' '}
+                  {formatTo12Hour(event.start.split('T')[1].slice(0, 5))} -{' '}
+                  {formatTo12Hour(event.end.split('T')[1].slice(0, 5))}
+                </div>
+                <a
+                  className="event-link"
+                  href={getLocationByTitle(event.title)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()} // Prevent modal from opening
+                >
+                  🗺️ Google Maps
+                </a>
+              </div>
+            ))
+          ) : (
+            <p>No upcoming events</p>
+          )}
+        </div>
+      </div>
       {showModal && (
         <div className="modal-backdrop">
           <div

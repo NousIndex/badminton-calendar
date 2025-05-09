@@ -277,7 +277,7 @@ const CalendarAppAdmin = () => {
       className="App"
       style={{ padding: '1rem' }}
     >
-      <h2 style={{ textAlign: 'center' }}>🏸 Badminton Calendar</h2>
+      <h2 style={{ textAlign: 'center' }}>🏸 Badminton Court Calendar</h2>
       <FullCalendar
         ref={calendarRef}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
