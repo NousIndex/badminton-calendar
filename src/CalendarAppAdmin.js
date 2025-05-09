@@ -251,33 +251,19 @@ const CalendarAppAdmin = () => {
           court_no: formData.court,
         });
       } else if (newEvent) {
-        setEvents([
-          ...events,
-          {
-            uuid: uuidv4(),
-            title: updatedTitle,
-            start: updatedStart,
-            end: updatedEnd,
-            color: color,
-            court_no: formData.court,
-          },
-        ]);
-        createBooking({
-          uuid: uuidv4(),
+        const generatedUuid = uuidv4();
+
+        const newBooking = {
+          uuid: generatedUuid,
           title: updatedTitle,
           start: updatedStart,
           end: updatedEnd,
           color: color,
           court_no: formData.court,
-        });
-        callCourtPlacePollWork({
-          uuid: uuidv4(),
-          title: updatedTitle,
-          start: updatedStart,
-          end: updatedEnd,
-          color: color,
-          court_no: formData.court,
-        });
+        };
+        setEvents([...events, newBooking]);
+        createBooking(newBooking);
+        callCourtPlacePollWork(newBooking);
       }
     } catch (error) {
       console.error('Error saving event:', error);

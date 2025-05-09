@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
       return res.status(404).json({ error: 'Booking not found' });
     }
 
-    //   return res.json({ modifiedCount: result.modifiedCount });
+    return res.status(200).json({ modifiedCount: result.modifiedCount });
   } catch (error) {
     console.error('Error fetching data:', error);
     return res.status(500).json({ error: 'Internal server error' });

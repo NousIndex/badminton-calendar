@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
       ...req.body,
     };
     await bookedCourts.insertOne(booking);
-    //   return res.status(201).json({ insertedId: result.insertedId });
+    return res.status(201).json({ insertedId: result.insertedId });
   } catch (error) {
     console.error('Error fetching data:', error);
     return res.status(500).json({ error: 'Internal server error' });
