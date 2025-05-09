@@ -8,7 +8,7 @@ import './CalendarApp.css';
 
 const CalendarAppAdmin = () => {
   const [events, setEvents] = useState([]);
-
+  const [isSaving, setIsSaving] = useState(false);
   const [initialView, setInitialView] = useState('dayGridMonth');
   const calendarRef = useRef(null);
   const [showModal, setShowModal] = useState(false);
@@ -175,68 +175,77 @@ const CalendarAppAdmin = () => {
   };
 
   const handleSave = () => {
-    const updatedTitle = formData.title;
-    const updatedStart = formData.dateStart + 'T' + formData.timeStart + ':00';
-    const updatedEnd = formData.dateStart + 'T' + formData.timeEnd + ':00';
-    const color = getColorByTitle(updatedTitle);
+    if (isSaving) return;
+    setIsSaving(true);
+    try {
+      const updatedTitle = formData.title;
+      const updatedStart =
+        formData.dateStart + 'T' + formData.timeStart + ':00';
+      const updatedEnd = formData.dateStart + 'T' + formData.timeEnd + ':00';
+      const color = getColorByTitle(updatedTitle);
 
-    if (activeEvent && !newEvent) {
-      // Update the local state `events` array
-      setEvents((prevEvents) =>
-        prevEvents.map((event) =>
-          event.uuid === activeEvent.extendedProps.uuid
-            ? {
-                ...event,
-                uuid: activeEvent.extendedProps.uuid,
-                title: updatedTitle,
-                start: updatedStart,
-                end: updatedEnd,
-                color: color,
-                court_no: formData.court,
-              }
-            : event
-        )
-      );
-      // Update the event in the database
-      updateBooking({
-        uuid: activeEvent.extendedProps.uuid,
-        title: updatedTitle,
-        start: updatedStart,
-        end: updatedEnd,
-        color: color,
-        court_no: formData.court,
-      });
-    } else if (newEvent) {
-      setEvents([
-        ...events,
-        {
+      if (activeEvent && !newEvent) {
+        // Update the local state `events` array
+        setEvents((prevEvents) =>
+          prevEvents.map((event) =>
+            event.uuid === activeEvent.extendedProps.uuid
+              ? {
+                  ...event,
+                  uuid: activeEvent.extendedProps.uuid,
+                  title: updatedTitle,
+                  start: updatedStart,
+                  end: updatedEnd,
+                  color: color,
+                  court_no: formData.court,
+                }
+              : event
+          )
+        );
+        // Update the event in the database
+        updateBooking({
+          uuid: activeEvent.extendedProps.uuid,
+          title: updatedTitle,
+          start: updatedStart,
+          end: updatedEnd,
+          color: color,
+          court_no: formData.court,
+        });
+      } else if (newEvent) {
+        setEvents([
+          ...events,
+          {
+            uuid: uuidv4(),
+            title: updatedTitle,
+            start: updatedStart,
+            end: updatedEnd,
+            color: color,
+            court_no: formData.court,
+          },
+        ]);
+        createBooking({
           uuid: uuidv4(),
           title: updatedTitle,
           start: updatedStart,
           end: updatedEnd,
           color: color,
           court_no: formData.court,
-        },
-      ]);
-      createBooking({
-        uuid: uuidv4(),
-        title: updatedTitle,
-        start: updatedStart,
-        end: updatedEnd,
-        color: color,
-        court_no: formData.court,
-      });
-      callCourtPlacePollWork({
-        uuid: uuidv4(),
-        title: updatedTitle,
-        start: updatedStart,
-        end: updatedEnd,
-        color: color,
-        court_no: formData.court,
-      });
+        });
+        callCourtPlacePollWork({
+          uuid: uuidv4(),
+          title: updatedTitle,
+          start: updatedStart,
+          end: updatedEnd,
+          color: color,
+          court_no: formData.court,
+        });
+      }
+    } catch (error) {
+      console.error('Error saving event:', error);
+    } finally {
+      setIsSaving(false);
+      setNewEvent(false);
+      setShowModal(false);
     }
-    setNewEvent(false);
-    setShowModal(false);
   };
 
   const handleDelete = () => {
@@ -360,7 +369,12 @@ const CalendarAppAdmin = () => {
               />
             </label>
             <div className="modal-buttons">
-              <button onClick={handleSave}>Save</button>
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+              >
+                Save
+              </button>
               <button onClick={() => setShowModal(false)}>Cancel</button>
             </div>
           </div>
