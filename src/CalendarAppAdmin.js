@@ -26,6 +26,7 @@ const CalendarAppAdmin = () => {
       dateStart: arg.dateStr,
       timeStart: '20:00',
       timeEnd: '22:00',
+      court: '',
     });
     setNewEvent(true);
     setShowModal(true);
@@ -33,39 +34,66 @@ const CalendarAppAdmin = () => {
 
   const createBooking = async (bookingData) => {
     const { color, ...cleanedEvent } = bookingData;
-    const res = await fetch('https://badminton-calendar.vercel.app/api/createEvent', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(cleanedEvent),
-    });
+    const res = await fetch(
+      'https://badminton-calendar.vercel.app/api/createEvent',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cleanedEvent),
+      }
+    );
 
     const data = await res.json();
     console.log('Created:', data);
   };
 
+  const callCourtPlacePollWork = async (bookingData) => {
+    await fetch(
+      'https://badminton-bookie123.vercel.app/court_place_poll_work',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          auth_key: 'K6iEEmI8NwWGS7VAzicLGTHWtmpkB/2AZtJY5myz8dI=',
+        },
+        body: JSON.stringify({
+          start: bookingData.start,
+          end: bookingData.end,
+          location: bookingData.title,
+        }),
+      }
+    );
+  };
+
   const updateBooking = async (updatedData) => {
     const { color, ...cleanedEvent } = updatedData;
-    const res = await fetch('https://badminton-calendar.vercel.app/api/updateEvent', {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(cleanedEvent),
-    });
+    const res = await fetch(
+      'https://badminton-calendar.vercel.app/api/updateEvent',
+      {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(cleanedEvent),
+      }
+    );
     const data = await res.json();
     console.log('Updated:', data);
   };
 
   const deleteBooking = async (uuid) => {
-    const res = await fetch('https://badminton-calendar.vercel.app/api/deleteEvent', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ uuid }),
-    });
+    const res = await fetch(
+      'https://badminton-calendar.vercel.app/api/deleteEvent',
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ uuid }),
+      }
+    );
     const data = await res.json();
     console.log('Deleted:', data);
   };
@@ -96,7 +124,9 @@ const CalendarAppAdmin = () => {
   //9b59b6 purple
 
   const fetchBookings = async () => {
-    const res = await fetch('https://badminton-calendar.vercel.app/api/getEvents');
+    const res = await fetch(
+      'https://badminton-calendar.vercel.app/api/getEvents'
+    );
     const data = await res.json();
     try {
       const coloredEvents = data.map((event) => ({
@@ -125,6 +155,7 @@ const CalendarAppAdmin = () => {
         dateStart: event.startStr.split('T')[0],
         timeStart: event.startStr.split('T')[1].slice(0, 5),
         timeEnd: event.endStr.split('T')[1].slice(0, 5),
+        court: event.extendedProps.court_no,
       });
     } catch {
       setFormData({
@@ -133,6 +164,7 @@ const CalendarAppAdmin = () => {
         dateStart: event.startStr.split('T')[0],
         timeStart: event.startStr.split('T')[1].slice(0, 5),
         timeEnd: event.startStr.split('T')[1].slice(0, 5),
+        court: event.extendedProps.court_no,
       });
     }
     setShowModal(true);
@@ -160,6 +192,7 @@ const CalendarAppAdmin = () => {
                 start: updatedStart,
                 end: updatedEnd,
                 color: color,
+                court_no: formData.court,
               }
             : event
         )
@@ -171,6 +204,7 @@ const CalendarAppAdmin = () => {
         start: updatedStart,
         end: updatedEnd,
         color: color,
+        court_no: formData.court,
       });
     } else if (newEvent) {
       setEvents([
@@ -181,6 +215,7 @@ const CalendarAppAdmin = () => {
           start: updatedStart,
           end: updatedEnd,
           color: color,
+          court_no: formData.court,
         },
       ]);
       createBooking({
@@ -189,6 +224,15 @@ const CalendarAppAdmin = () => {
         start: updatedStart,
         end: updatedEnd,
         color: color,
+        court_no: formData.court,
+      });
+      callCourtPlacePollWork({
+        uuid: uuidv4(),
+        title: updatedTitle,
+        start: updatedStart,
+        end: updatedEnd,
+        color: color,
+        court_no: formData.court,
       });
     }
     setNewEvent(false);
@@ -257,7 +301,9 @@ const CalendarAppAdmin = () => {
           >
             <div className="modal-top">
               <h3>{modalTitle}</h3>
-              <button onClick={handleDelete}>Delete</button>
+              {modalTitle === 'Edit Event' && (
+                <button onClick={handleDelete}>Delete</button>
+              )}
             </div>
             <label>
               Location:
@@ -275,6 +321,16 @@ const CalendarAppAdmin = () => {
                 <option value="Delta Sports Hall">Delta Sports Hall</option>
                 <option value="Stadium">Stadium</option>
               </select>
+            </label>
+            <label>
+              Court:
+              <input
+                name="court"
+                type="text"
+                value={formData.court}
+                onChange={handleInputChange}
+                maxLength={4}
+              />
             </label>
             <label>
               Date:

@@ -50,7 +50,9 @@ const CalendarApp = () => {
   }
 
   const fetchBookings = async () => {
-    const res = await fetch('https://badminton-calendar.vercel.app/api/getEvents');
+    const res = await fetch(
+      'https://badminton-calendar.vercel.app/api/getEvents'
+    );
     const data = await res.json();
     try {
       const coloredEvents = data.map((event) => ({
@@ -78,6 +80,7 @@ const CalendarApp = () => {
         timeStart: event.startStr.split('T')[1].slice(0, 5),
         dateEnd: event.endStr.split('T')[0],
         timeEnd: event.endStr.split('T')[1].slice(0, 5),
+        court: event.extendedProps.court_no,
       });
     } catch {
       setFormData({
@@ -86,6 +89,7 @@ const CalendarApp = () => {
         timeStart: event.startStr.split('T')[1].slice(0, 5),
         dateEnd: event.startStr.split('T')[0],
         timeEnd: event.startStr.split('T')[1].slice(0, 5),
+        court: event.extendedProps.court_no,
       });
     }
     setShowModal(true);
@@ -148,12 +152,19 @@ const CalendarApp = () => {
             className="modal"
             ref={modalRef}
           >
-            <h3>🏸Badminton Court</h3>
+            <h3>🏸Badminton - Court {formData.court}</h3>
             <label>
               <h3 name="title">📍Location: {formData.title}</h3>
             </label>
             <label>
-              <h3 name="title">📅Date: {formData.dateStart}</h3>
+              <h3 name="title">
+                📅Date:{' '}
+                {formData.dateStart
+                  ? `${formData.dateStart.split('-')[2]}-${
+                      formData.dateStart.split('-')[1]
+                    }-${formData.dateStart.split('-')[0]}`
+                  : ''}
+              </h3>
             </label>
             <label>
               <h3 name="title">
