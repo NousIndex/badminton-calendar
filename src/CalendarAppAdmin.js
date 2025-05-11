@@ -369,7 +369,7 @@ const CalendarAppAdmin = () => {
                 <div className="event-date-time">
                   🏸 Court {event.court_no}
                   <br />
-                  📅 {new Date(event.start).toLocaleDateString()}
+                  🗓️ {new Date(event.start).toLocaleDateString()}
                   <br />⏰{' '}
                   {formatTo12Hour(event.start.split('T')[1].slice(0, 5))} -{' '}
                   {formatTo12Hour(event.end.split('T')[1].slice(0, 5))}
