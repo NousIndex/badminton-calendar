@@ -89,6 +89,7 @@ const CalendarAppAdmin = () => {
           start: bookingData.start,
           end: bookingData.end,
           location: bookingData.title,
+          uuid: bookingData.uuid,
         }),
       }
     );
